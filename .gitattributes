@@ -1,0 +1,1 @@
+group_vars/production filter=git-crypt diff=git-crypt
