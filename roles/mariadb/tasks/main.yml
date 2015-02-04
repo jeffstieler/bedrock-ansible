@@ -46,3 +46,37 @@
             state=absent
             login_user="{{ mysql_user }}"
             login_password="{{ mysql_root_password }}"
+
+- name: add /etc/mysql/my.cnf
+  template: >
+    src=etc-mysql-my.cnf.j2
+    dest=/etc/mysql/my.cnf
+    owner=root group=root mode=0644
+  notify:
+    - mysql restart
+
+- name: add /etc/mysql/conf.d directory
+  file: >
+    path=/etc/mysql/conf.d state=directory
+    owner=root group=root mode=0755
+
+- name: add /etc/mysql/conf.d/main.cnf
+  template: >
+    src=etc-mysql-conf.d-{{ mysqlConfiguration }}.cnf.j2
+    dest=/etc/mysql/conf.d/main.cnf
+    owner=root group=root mode=0644
+  notify:
+    - mysql restart
+
+- name: remove extra /etc/mysql/conf.d configurations
+  file: >
+    path=/etc/mysql/conf.d/{{ item }} state=absent
+  with_items:
+    - mariadb.cnf
+    - tokudb.cnf
+
+- name: ensure mysql owner on /var/lib/mysql
+  shell: >
+    chown -R mysql: /var/lib/mysql
+  changed_when: False
+
