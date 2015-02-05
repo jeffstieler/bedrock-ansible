@@ -18,3 +18,4 @@
     - { role: capistrano-setup, tags: [capistrano-setup], when: "'development' not in group_names" }
     - { role: wordpress-sites, tags: [wordpress-sites] }
     - { role: cron, tags: [cron] }
+    - { role: kamaln7.swapfile, tags: [swapfile] }
