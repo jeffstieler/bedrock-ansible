@@ -11,6 +11,7 @@ post_max_size = {{ php_post_max_size }}
 upload_max_filesize = {{ php_upload_max_filesize }}
 max_input_vars = {{ php_max_input_vars }}
 sendmail_path = {{ php_sendmail_path }}
+date.timezone = "{{ php_default_timezone }}"
 
 [mysqlnd]
 mysqlnd.collect_memory_statistics = {{ php_mysqlnd_collect_memory_statistics }}
