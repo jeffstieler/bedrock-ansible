@@ -75,9 +75,9 @@
 
 - name: Setup system cron
   cron: name="{{ item.site_name }} WordPress cron"
-        minute="*/15"
+        minute="*/2"
         user="{{ item.user }}"
-        job="curl -s {{ item.env.wp_siteurl }}/wp-cron.php"
+        job="/usr/bin/flock -n /tmp/.{{ item.site_name|replace('.', '_') }}-cron-lock wget -q -O /dev/null {{ item.env.wp_siteurl }}/wp/wp-cron.php?doing_wp_cron"
         cron_file="wordpress-{{ item.site_name|replace('.', '_') }}"
   with_items: wordpress_sites
-  when: item.system_cron | default(False) == True
+  when: item.system_cron | default(False)
