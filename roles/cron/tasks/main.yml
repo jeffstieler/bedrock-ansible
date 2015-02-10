@@ -1,4 +1,0 @@
----
-- name: Setup "real" wp-cron
-  cron: name="wp-cron ({{ item.site_name }})" minute="*/5" job="php /srv/www/{{ item.site_name }}/current/web/wp/wp-cron.php > /dev/null 2>&1" state=present
-  with_items: wordpress_sites
