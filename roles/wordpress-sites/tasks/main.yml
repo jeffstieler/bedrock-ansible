@@ -78,6 +78,5 @@
         minute="*/2"
         user="{{ item.user }}"
         job="/usr/bin/flock -n /tmp/.{{ item.site_name|replace('.', '_') }}-cron-lock wget -q -O {{ www_root }}/{{ item.site_name }}/logs/{{ item.site_name }}.cron.log \"{{ item.env.wp_siteurl }}/wp-cron.php?doing_wp_cron\""
-        cron_file="wordpress-{{ item.site_name|replace('.', '_') }}"
   with_items: wordpress_sites
   when: item.system_cron | default(False)
