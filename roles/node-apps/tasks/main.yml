@@ -1,0 +1,13 @@
+---
+- name: Create Node apps configuration for Nginx
+  template: src="node-app.conf.j2"
+            dest="/etc/nginx/sites-available/{{ item.name }}.conf"
+  with_items: node_apps
+
+- name: Enable Node app w/Nginx
+  file: src="/etc/nginx/sites-available/{{ item.name }}.conf"
+        dest="/etc/nginx/sites-enabled/{{ item.name }}.conf"
+        owner=root
+        group=root
+        state=link
+  with_items: node_apps

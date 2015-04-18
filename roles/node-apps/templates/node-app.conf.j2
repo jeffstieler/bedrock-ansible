@@ -1,0 +1,28 @@
+server {
+
+  listen 80;
+
+  server_name  {{ item.domain }};
+
+{% if item.path is defined -%}
+  location {{ item.path }} {
+{% else %}
+  location / {
+{%- endif %}
+    {% if item.path is defined %}
+      rewrite {{ item.path }}(.*)/? /$1 break;
+    {% endif %}
+      proxy_pass http://localhost:{{ item.port }};
+      proxy_http_version 1.1;
+      proxy_set_header Upgrade $http_upgrade;
+      proxy_set_header Connection 'upgrade';
+      proxy_set_header Host $host;
+      proxy_cache_bypass $http_upgrade;
+  }
+
+{% if item.env is defined and item.env == 'development' -%}
+  # See Virtualbox section at http://wiki.nginx.org/Pitfalls
+  sendfile off;
+{%- endif %}
+
+}
