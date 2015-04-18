@@ -6,6 +6,10 @@ server {
   access_log   {{ www_root }}/{{ item.site_name }}/logs/{{ item.site_name }}.access.log;
   error_log    {{ www_root }}/{{ item.site_name }}/logs/{{ item.site_name }}.error.log;
 
+  {% if item.extra_server_config is defined %}
+  {{ item.extra_server_config }}
+  {% endif %}
+
   root  {{ www_root }}/{{ item.site_name }}/current/web;
   index index.php;
 
