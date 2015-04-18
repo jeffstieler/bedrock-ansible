@@ -3,6 +3,7 @@
   template: src="node-app.conf.j2"
             dest="/etc/nginx/sites-available/{{ item.name }}.conf"
   with_items: node_apps
+  when: item.site_hosts is defined
 
 - name: Enable Node app w/Nginx
   file: src="/etc/nginx/sites-available/{{ item.name }}.conf"
@@ -11,3 +12,4 @@
         group=root
         state=link
   with_items: node_apps
+  when: item.site_hosts is defined
