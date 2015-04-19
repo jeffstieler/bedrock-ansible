@@ -1,4 +1,12 @@
 ---
+- name: Create web root of sites
+  file: path="{{ www_root }}/{{ item.site_name }}"
+        owner="{{ item.user | default(user) }}"
+        group=www-data
+        mode=0755
+        state=directory
+  with_items: node_apps
+
 - name: Create Node apps configuration for Nginx
   template: src="node-app.conf.j2"
             dest="/etc/nginx/sites-available/{{ item.name }}.conf"
