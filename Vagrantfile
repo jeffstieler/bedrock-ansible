@@ -8,7 +8,9 @@ ANSIBLE_PATH = '.' # path targeting Ansible directory (relative to Vagrantfile)
 config_file = File.join(ANSIBLE_PATH, 'group_vars/development')
 
 if File.exists?(config_file)
-  wordpress_sites = YAML.load_file(config_file)['wordpress_sites']
+  config = YAML.load_file(config_file)
+  wordpress_sites = config['wordpress_sites']
+  node_apps = config['node_apps']
 else
   raise 'group_vars/development file not found. Please set `ANSIBLE_PATH` in Vagrantfile'
 end
@@ -21,12 +23,15 @@ Vagrant.configure('2') do |config|
   # Required for NFS to work, pick any local IP
   config.vm.network :private_network, ip: '192.168.50.5'
 
-  main_site, *other_sites = wordpress_sites
+  all_sites = wordpress_sites.concat(node_apps)
+
+  main_site, *other_sites = all_sites
 
   config.vm.hostname = main_site['site_hosts'].first
 
   if Vagrant.has_plugin? 'vagrant-hostsupdater'
-    host_aliases = other_sites.flat_map { |site| site['site_hosts'] }
+    host_aliases = other_sites.select { |site| site.has_key?('site_hosts') }
+    host_aliases = host_aliases.flat_map { |site| site['site_hosts'] }
     config.hostsupdater.aliases = host_aliases - [config.vm.hostname]
   else
     puts 'vagrant-hostsupdater missing, please install the plugin:'
@@ -34,7 +39,7 @@ Vagrant.configure('2') do |config|
   end
 
   if Vagrant::Util::Platform.windows?
-    wordpress_sites.each do |site|
+    all_sites.each do |site|
       config.vm.synced_folder site['local_path'], remote_site_path(site), owner: 'vagrant', group: 'www-data', mount_options: ['dmode=776', 'fmode=775']
     end
   else
@@ -42,7 +47,7 @@ Vagrant.configure('2') do |config|
       raise Vagrant::Errors::VagrantError.new,
         "vagrant-bindfs missing, please install the plugin:\nvagrant plugin install vagrant-bindfs"
     else
-      wordpress_sites.each do |site|
+      all_sites.each do |site|
         config.vm.synced_folder site['local_path'], nfs_path(site), type: 'nfs'
         config.bindfs.bind_folder nfs_path(site), remote_site_path(site), u: 'vagrant', g: 'www-data'
       end
