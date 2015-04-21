@@ -1,10 +1,26 @@
 ---
 - name: Create web root of sites
-  file: path="{{ www_root }}/{{ item.site_name }}"
+  file: path="{{ www_root }}/{{ item.site_name }}/current"
         owner="{{ item.user | default(user) }}"
         group=www-data
         mode=0755
         state=directory
+  with_items: node_apps
+
+- name: Create logs folder of sites
+  file: path="{{ www_root }}/{{ item.site_name }}/logs"
+        owner="{{ item.user | default(user) }}"
+        group=www-data
+        mode=0755
+        state=directory
+  with_items: node_apps
+
+- name: Change site owner to user
+  file: path="{{ www_root }}/{{ item.site_name }}"
+        owner="{{ item.user | default(user) }}"
+        group=www-data
+        state=directory
+        recurse=yes
   with_items: node_apps
 
 - name: Create Node apps configuration for Nginx
@@ -21,3 +37,11 @@
         state=link
   with_items: node_apps
   when: item.site_hosts is defined
+
+- name: Install Forever
+  npm: name=forever global=yes state=present
+  sudo: yes
+
+- name: Create forever init script for each app
+  template: src=app_workers_init.conf.j2 dest=/etc/init/{{ item.site_name }}_workers.conf owner={{ item.user }} group=www-data
+  with_items: node_apps
