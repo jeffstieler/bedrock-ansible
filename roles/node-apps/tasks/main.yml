@@ -38,10 +38,6 @@
   with_items: node_apps
   when: item.site_hosts is defined
 
-- name: Install Forever
-  npm: name=forever global=yes state=present
-  sudo: yes
-
-- name: Create forever init script for each app
-  template: src=app_workers_init.conf.j2 dest=/etc/init/{{ item.site_name }}_workers.conf owner={{ item.user }} group=www-data
+- name: Create Upstart script for each app
+  template: src=node-upstart.conf.j2 dest=/etc/init/{{ item.site_name }}.conf owner={{ item.user }} group=www-data
   with_items: node_apps
