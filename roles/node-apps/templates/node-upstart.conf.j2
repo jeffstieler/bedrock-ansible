@@ -4,33 +4,26 @@
 
 description "Upstart job definition for {{ item.site_name }}"
 
+console log
+
 # When to start the service
-start on runlevel [2345]
+start on filesystem and started networking
 
 # When to stop the service
-stop on runlevel [06]
+stop on runlevel [016]
 
-env APP_PATH="{{ www_root }}/{{ item.site_name }}"
-env APP_START="/current/{{ item.main_executable }}.js"
-env LOG="/logs/{{ item.site_name }}.log"
-env PID="/var/opt/{{ item.user }}/run/{{ item.site_name }}.pid"
+# User to run as
+setuid {{ item.user }}
 
-# Prepare the environment
-#   Create directories for logging and process management
-#   Change ownership to the user running the process
-pre-start script
-    mkdir -p /var/opt/{{ item.user }}/run
-    chown -R {{ item.user }}:www-data /var/opt/{{ item.user }}
-end script
-
+env APP_PATH="{{ www_root }}/{{ item.site_name }}/current"
+env APP_START="{{ item.main_executable }}.js"
+env LOG="{{ www_root }}/{{ item.site_name }}/logs/{{ item.site_name }}.log"
 
 # If the process quits unexpectadly trigger a respawn
 respawn
 
 # Start the process
-exec start-stop-daemon \
-  --start \
-  --chuid {{ item.user }} \
-  --make-pidfile \
-  --pidfile $PID \
-  --exec /usr/bin/node -- $APP_PATH/$APP_START >> $APP_PATH/$LOG 2>&1
+script
+  cd $APP_PATH
+  /usr/bin/node $APP_PATH/$APP_START >> $LOG 2>&1
+end script
