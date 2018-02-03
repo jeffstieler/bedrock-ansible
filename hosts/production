@@ -1,5 +1,0 @@
-[web]
-digitalocean
-
-[production:children]
-web
