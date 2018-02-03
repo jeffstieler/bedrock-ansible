@@ -1,2 +1,2 @@
-group_vars/production filter=git-crypt diff=git-crypt
-group_vars/development filter=git-crypt diff=git-crypt
+group_vars_bak/production filter=git-crypt diff=git-crypt
+group_vars_bak/development filter=git-crypt diff=git-crypt
