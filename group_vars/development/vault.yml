@@ -9,8 +9,8 @@ vault_wordpress_sites:
     env:
       db_user: root
       db_password: devpw
-  # utahbeerfinder.com:
-  #   admin_password: admin
-  #   env:
-  #     db_user: root
-  #     db_password: devpw
+  utahbeerfinder.com:
+    admin_password: admin
+    env:
+      db_user: root
+      db_password: devpw
