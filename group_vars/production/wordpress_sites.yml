@@ -9,7 +9,7 @@ wordpress_sites:
         redirects:
           - www.utahbeerfinder.com
     repo: git@github.com:jeffstieler/utah-beer-finder-wp.git # replace with your Git repo URL
-    branch: externally-updated-woocommerce
+    branch: master
     local_path: utah-beer-finder
     multisite:
       enabled: false
