@@ -18,3 +18,18 @@ wordpress_sites:
       provider: letsencrypt
     cache:
       enabled: true
+  jeffstieler.com:
+    site_hosts:
+      - canonical: jeffstieler.com
+        redirects:
+          - www.jeffstieler.com
+    repo: git@github.com:jeffstieler/jeffstieler.com.git # replace with your Git repo URL
+    branch: master
+    local_path: jeffstieler-com
+    multisite:
+      enabled: false
+    ssl:
+      enabled: true
+      provider: letsencrypt
+    cache:
+      enabled: true
